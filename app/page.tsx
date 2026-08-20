@@ -4,6 +4,12 @@ import { createClient } from 'genlayer-js';
 import { testnetBradbury } from 'genlayer-js/chains';
 import { custom } from 'viem';
 
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
 export default function Home() {
   const [account, setAccount] = useState<string | null>(null);
   const [statusText, setStatusText] = useState('Not connected to wallet');
@@ -56,17 +62,17 @@ export default function Home() {
       setTxHash(null);
       setStatusText('🤖 AI validators evaluating yields & reaching consensus...');
 
+      // @ts-ignore
       const client = createClient({
         account: account as `0x${string}`,
         chain: testnetBradbury,
-        transport: custom(window.ethereum),
       });
 
       const hash = await client.writeContract({
         address: contractAddress,
         functionName: 'rebalance',
         args: [],
-        value: 0n,
+        value: BigInt(0),
       });
 
       setTxHash(hash);
